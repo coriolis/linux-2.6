@@ -32,12 +32,16 @@ static int io_port = JSCLIPBOARD_PORT;
 static int minor = JSCLIPBOARD_MINOR;
 static struct semaphore open_sem;
 static int need_cache_sync;
+static int jlfs = 0;
 
 module_param(io_port, int, 0);
 MODULE_PARM_DESC(io_port, "IO port");
 
 module_param(minor, int, 0);
 MODULE_PARM_DESC(minor, "minor number");
+
+module_param(jlfs, int, 0);
+MODULE_PARM_DESC(minor, "used by jlfs");
 
 static ssize_t jsclipboard_read(struct file *file, char __user *buf,
                                 size_t count1, loff_t *ppos)
@@ -91,11 +95,10 @@ static ssize_t jsclipboard_write(struct file *file, const char *buf,
 
         if (!access_ok(VERIFY_READ, buf, count1))
                 return -EFAULT;
-        if (*ppos == 0) {
+        if (!jlfs && *ppos == 0) {
                 /* flush clipboard */
                 outl(0, io_port);
         }
-
         need_cache_sync = 1;
 
         count = count1;
@@ -122,15 +125,19 @@ static int jsclipboard_open(struct inode *inode, struct file *file)
 {
 	if (down_trylock(&open_sem))
 		return -EBUSY;
-        need_cache_sync = 0;
+    need_cache_sync = 0;
+    if (jlfs) {
+            /* flush clipboard */
+            outl(0, io_port);
+    }
 	return 0;
 }
 
 static int jsclipboard_release(struct inode *inode, struct file *file)
 {
-        if (need_cache_sync) {
-                outl(0, io_port + 12);
-        }
+    if (jlfs || need_cache_sync) {
+            outl(0, io_port + 12);
+    }
 	up(&open_sem);
 	return 0;
 }

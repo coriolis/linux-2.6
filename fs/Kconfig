@@ -628,6 +628,16 @@ config FUSE_FS
 	  If you want to develop a userspace FS, or if you want to use
 	  a filesystem based on FUSE, answer Y or M.
 
+config JLFS
+	tristate "JSLinux Filesystem support"
+	help
+	  JLFS is a thin shared-folder filesystem used only on JSLinux, where Linux
+	  runs inside the browser on a Javascript x86 emulator. It is used to
+	  expose files on the host via the HTML5 File API. It needs a companion
+	  "hypervisor-side" Javascript module to bridge HTML5 and this driver.
+
+	  If you want to run JSLinux, you might want to answer Y or M.
+
 config GENERIC_ACL
 	bool
 	select FS_POSIX_ACL
