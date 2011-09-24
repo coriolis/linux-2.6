@@ -1030,5 +1030,11 @@ config TELCLOCK
 	  sysfs directory, /sys/devices/platform/telco_clock, with a number of
 	  files for controlling the behavior of this hardware.
 
+config JSCLIPBOARD
+	tristate "Javascript clipboard support (JS/Linux device)"
+	default n
+	help
+	  Javascript clipboard support for JS/Linux
+
 endmenu
 

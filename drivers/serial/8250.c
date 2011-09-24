@@ -70,7 +70,8 @@ static unsigned int nr_uarts = CONFIG_SERIAL_8250_RUNTIME_UARTS;
 #define DEBUG_INTR(fmt...)	do { } while (0)
 #endif
 
-#define PASS_LIMIT	256
+//#define PASS_LIMIT	256
+#define PASS_LIMIT	(256 * 100)
 
 /*
  * We default to IRQ0 for the "no irq" hack.   Some
